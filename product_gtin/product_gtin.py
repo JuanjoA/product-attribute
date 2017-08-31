@@ -118,12 +118,19 @@ def check_ean13(eancode):
     check = 10 - operator.mod(sum, 10)
     if check == 10:
         check = 0
-
     return check == int(eancode[-1])
-
 
 def check_ean11(eancode):
     pass
+
+def check_ean128(eancode):
+    """https://en.wikipedia.org/wiki/GS1-128
+    :param eancode: string, code128 (gs1-128 or also know by UCC/EAN-128) code
+    :return: boolean
+    """
+    # all eancode with no other check to true is considered code128 and accepted
+    return True
+
 
 
 def check_gtin14(eancode):
@@ -155,7 +162,7 @@ class product_product(orm.Model):
 
     def _check_ean_key(self, cr, uid, ids):
         for rec in self.browse(cr, uid, ids):
-            if not check_ean(rec.ean13):
+            if not check_ean(rec.ean13) and not check_ean128(rec.ean13):
                 return False
         return True
 
